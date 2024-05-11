@@ -1,0 +1,88 @@
+// EXERCISE_2
+// DeadLine: 2024-05-16
+// Submit Data: 2024-05-11
+
+pipeline TreesPipeline {
+
+    // Pipeline
+    TreesExtractor     
+        -> TreesTextFileInterpreter
+        -> TreesCSVInterpreter 
+        -> TreesColumnDeleter
+        -> TreesTableInterpreter
+        -> TreesLoader;
+
+    // Get CSV file    
+    block TreesExtractor oftype HttpExtractor {
+        url: "https://opendata.rhein-kreis-neuss.de/api/v2/catalog/datasets/stadt-neuss-herbstpflanzung-2023/exports/csv";
+    }
+
+
+    // Text Interpreter
+    block TreesTextFileInterpreter oftype TextFileInterpreter { }
+
+
+    // CSV Interpreter
+    block TreesCSVInterpreter oftype CSVInterpreter {
+        delimiter: ';';
+    }  
+
+
+    // ** constraints and value types **//
+
+    //Define new valueType for filtering City Title
+    valuetype City oftype text {
+        constraints: [ CityName ];
+    }
+
+    //Define a constraint for City
+    //We are only interested in Furth, valid stadtteil start with "Furth-"
+    constraint CityName oftype RegexConstraint {
+        regex: /^Furth-.*$/;
+    }
+
+    //Define new valueType for id that is a geo cordinate
+    valuetype GeoCoordinate oftype text {
+        constraints: [ GeoCoordinateFormat ];
+    }
+
+    //Define a constraint for ID
+    //"id" contains geopoints with the following pattern:
+    //{geo-coordinate 1}, {geo-coordinate 2}
+    //a geo-coordinate is defined as {1-3 numbers}.{numbers}
+
+    constraint GeoCoordinateFormat oftype RegexConstraint {
+        regex: /^(\d{1,3}\.\d+), (\d{1,3}\.\d+)$/;
+    }
+    
+    // *********************************//
+
+    //Drop "baumart_deutsch" column
+    block TreesColumnDeleter oftype ColumnDeleter
+    {
+        delete: [column E];
+    }
+
+
+    // Table Interpreter
+    block TreesTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            'lfd_nr' oftype integer,    
+            'stadtteil' oftype City,
+            'standort' oftype text,
+            'baumart_botanisch' oftype text,
+            'baumart_deutsch' oftype text,
+            'id' oftype GeoCoordinate,
+            'baumfamilie' oftype text,
+        ];
+    } 
+
+    // Create the SQLITE db
+    block TreesLoader oftype SQLiteLoader {
+        table: "trees";
+        file: "./trees.sqlite";
+    }
+}
+
+
