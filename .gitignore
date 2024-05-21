@@ -1,3 +1,7 @@
 .DS_Store
 /data/*
 !/data/.gitkeep
+
+#gitignore files and folders listed here
+*.sqlite
+*.csv

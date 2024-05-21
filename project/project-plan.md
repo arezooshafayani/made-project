@@ -45,5 +45,7 @@ This dataset details energy consumption specifically within road transport, cove
 <!-- List of work packages ordered sequentially, each pointing to an issue with more details. -->
 
 1. Search and Identify Two Datasets for Project [#1][i1]
+2. build an automated data pipeline [#2][i2]
 
 [i1]: https://github.com/arezooshafayani/made-project/issues/1
+[i2]: https://github.com/arezooshafayani/made-project/issues/2
