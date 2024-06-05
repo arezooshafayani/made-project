@@ -1,6 +1,6 @@
 # Exercise Badges
 
-![](https://byob.yarr.is/arezooshafayani/made-project/score_ex1) ![](https://byob.yarr.is/arezooshafayani/made-project/score_ex2) ![](https://byob.yarr.is/arezooshafayani/made-project/score_ex3) ![](https://byob.yarr.is/arezooshafayani/made-project/score_ex4) ![](https://byob.yarr.is/arezooshafayani/made-project/score_ex5)
+![](https://byob.yarr.is/arezooshafayani/made-project/score_ex1) ![](https://byob.yarr.is/arezooshafayani/made-project/score_ex2) ![](https://byob.yarr.is/arezooshafayani/made-project/score_ex33) ![](https://byob.yarr.is/arezooshafayani/made-project/score_ex4) ![](https://byob.yarr.is/arezooshafayani/made-project/score_ex5)
 
 # Methods of Advanced Data Engineering Template Project
 
