@@ -1,0 +1,100 @@
+// EXERCISE_3
+// DeadLine: 2024-06-06
+// Submit Data: 2024-06-05
+
+pipeline TransportPipeline {
+
+    // Pipeline
+    TransportExtractor     
+        -> TransportTextFileInterpreter
+        -> TransportCSVInterpreter 
+        -> TransportRowDeleter
+        -> TransportColumnDeleter
+        -> TransportTableInterpreter        
+        -> TransportLoader;
+
+
+    // Get CSV file from URL 
+    block TransportExtractor oftype HttpExtractor {
+        url: "https://www-genesis.destatis.de/genesis/downloads/00/tables/46131-0014_00.csv";
+    }
+
+    // Text Interpreter
+    //Ensure German umlauts are saved correctly
+    block TransportTextFileInterpreter oftype TextFileInterpreter { 
+        encoding: "latin2";  
+    }
+
+    // CSV Interpreter
+    block TransportCSVInterpreter oftype CSVInterpreter {
+        delimiter: ';';
+    }  
+
+    //Drop "Additional" Row
+    block TransportRowDeleter oftype RowDeleter {
+        delete: [row 1, row 2, row 3, row 4, row 5, row 6, row 7,row 41337,row 41338, row 41339];
+    }
+
+    //Drop "Additional" Column
+    block TransportColumnDeleter oftype ColumnDeleter
+    {
+        delete: [column F, column G, column H , column I, column J, column L, column M,column N,
+        column Q ,column R,column S,column T,column U,column V,column W,column Z,
+        column AA, column AB, column AC, column AD, column AE,
+        column AF, column AG, column AH , column AI, column AJ, 
+        column AL, column AM,column AN,column AQ ,column AR,column AS];
+    }
+
+    //Define valueType for Month (should be in German)
+    valuetype GEMonth_Type oftype text {
+        constraints: [ GEMonth_Constraint ];
+    }
+
+    //Define a constraint for Month
+    //'month' must be a German month, capitalized
+    constraint GEMonth_Constraint oftype AllowlistConstraint {
+        allowlist: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+    }
+
+    //Numeric values must be positive integers
+    valuetype PositiveNumber_Type oftype integer {
+        constraints: [ PositiveNumber_Constraint ];
+    }
+
+    //Define a constraint for Numbers (should positive integers)
+    constraint PositiveNumber_Constraint oftype RangeConstraint {
+        lowerBound: 0;
+        lowerBoundInclusive: true;
+    }
+
+    //'goods_id' must start with NST7-, followed by three numbers or capital letters
+    valuetype GoodsID_Type oftype text {
+        constraints: [ GoodsID_Constraint ];
+    }
+
+    //Define a constraint for GoodsID
+    constraint GoodsID_Constraint oftype RegexConstraint {
+        regex: /^NST7-[A-Z0-9]{3}$/;
+    }
+
+    // Table Interpreter
+    block TransportTableInterpreter oftype TableInterpreter {
+        header: false;
+        columns: [
+            'year' oftype PositiveNumber_Type,    
+            'month' oftype GEMonth_Type,
+            'goods_id' oftype GoodsID_Type,
+            'goods_name' oftype text,
+            'goods_sourc' oftype text,
+            'abroad' oftype PositiveNumber_Type,
+            'total' oftype PositiveNumber_Type,
+        ];
+    }
+
+
+    // Create the SQLITE db
+    block TransportLoader oftype SQLiteLoader {
+        table: "goods";
+        file: "./goodsTransportedByTrain.sqlite";
+    }
+}

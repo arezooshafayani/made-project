@@ -5,22 +5,22 @@ import requests
 import gzip
 import io
 import sqlite3
+import logging
 
 
 class Pipeline:
 
     # Unzip dataset from URL
+    # Downloads a gzipped CSV file from the specified URL, decompresses it,
+    # and returns a Pandas DataFrame.
+
+    # Parameters:
+    # url (str): The URL of the gzipped CSV file.
+
+    # Returns:
+    # pd.DataFrame: The content of the CSV file as a Pandas DataFrame.
+
     def read_gzipped_csv_from_url(self, url):
-
-        # Downloads a gzipped CSV file from the specified URL, decompresses it,
-        # and returns a Pandas DataFrame.
-
-        # Parameters:
-        # url (str): The URL of the gzipped CSV file.
-
-        # Returns:
-        # pd.DataFrame: The content of the CSV file as a Pandas DataFrame.
-
         # Step 1: Download the gzipped file
         response = requests.get(url)
         response.raise_for_status()  # Ensure we notice bad responses
@@ -115,18 +115,35 @@ class Pipeline:
     def run_pipeline(self):
         # DATASET_1 : Final energy consumption in transport by type of fuel
         # Read Information from Link and unzip
-        url_Dataset_1 = 'https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/ten00126/?format=SDMX-CSV&compressed=true'
-        df_Dataset_1 = self.read_gzipped_csv_from_url(url_Dataset_1)
+        try:
+            url_Dataset_1 = 'https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/ten00126/?format=SDMX-CSV&compressed=true'
+            df_Dataset_1 = self.read_gzipped_csv_from_url(url_Dataset_1)
+        except Exception as e:
+            logging.error(f"Error: {e}")
+            print(f"Something Wrong happen during getting the Dataset_1")
+            return
 
         print("#1 DATASET 1: Read and Unzipped Data from URL.")
 
         # Drop columns
-        columns_to_drop_Dataset_1 = ['DATAFLOW', 'OBS_FLAG']
-        df_Dataset_1 = self.drop_columns(
-            df_Dataset_1, columns_to_drop_Dataset_1)
+        try:
+            columns_to_drop_Dataset_1 = ['DATAFLOW', 'OBS_FLAG']
+            df_Dataset_1 = self.drop_columns(
+                df_Dataset_1, columns_to_drop_Dataset_1)
+        except Exception as e:
+            logging.error(f"Error: {e}")
+            print(f"Something Wrong happen during Drop columns on the Dataset_1")
+            return
 
         # Convert TIME_PERIOD to datetime
-        df_Dataset_1 = self.convert_to_datetime(df_Dataset_1, 'TIME_PERIOD')
+        try:
+            df_Dataset_1 = self.convert_to_datetime(
+                df_Dataset_1, 'TIME_PERIOD')
+        except Exception as e:
+            logging.error(f"Error: {e}")
+            print(
+                f"Something Wrong happen during Convert TIME_PERIOD to datetime on the Dataset_1")
+            return
 
         # Rename columns
         columns_mapping_Dataset_1 = {
@@ -139,13 +156,24 @@ class Pipeline:
             'TIME_PERIOD': 'time_period',
             'OBS_VALUE': 'energy_consumption_value',
         }
-        df_Dataset_1 = self.rename_columns(
-            df_Dataset_1, columns_mapping_Dataset_1)
+        try:
+            df_Dataset_1 = self.rename_columns(
+                df_Dataset_1, columns_mapping_Dataset_1)
+        except Exception as e:
+            logging.error(f"Error: {e}")
+            print(f"Something Wrong happen during Rename columns on the Dataset_1")
+            return
 
         print("#2 DATASET 1: Transformed and Cleaned Data")
         # Save to SQLite database
-        self.save_to_sqlite(
-            df_Dataset_1, 'energy_consumption.db', 'FECT_Total')
+        try:
+            self.save_to_sqlite(
+                df_Dataset_1, 'energy_consumption.db', 'FECT_Total')
+        except Exception as e:
+            logging.error(f"Error: {e}")
+            print(
+                f"Something Wrong happen during Save to SQLite database on the Dataset_1")
+            return
 
         print("#3 DATASET 1: Transfered Data to FECT_Total table in SQLLite.")
 
@@ -155,18 +183,36 @@ class Pipeline:
 
         # DATASET_2 : Final energy consumption in road transport by type of fuel
         # Read Information from Link and unzip
-        url_Dataset_2 = 'https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/ten00127/?format=SDMX-CSV&compressed=true'
-        df_Dataset_2 = self.read_gzipped_csv_from_url(url_Dataset_2)
+        try:
+            url_Dataset_2 = 'https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/ten00127/?format=SDMX-CSV&compressed=true'
+            df_Dataset_2 = self.read_gzipped_csv_from_url(url_Dataset_2)
+        except Exception as e:
+            logging.error(f"Error: {e}")
+            print(
+                f"Something Wrong happen during Read Information from Link and unzip on the Dataset_2")
+            return
 
         print("#4 DATASET 2: Read and Unzipped Data from URL.")
 
         # Drop columns
-        columns_to_drop_Dataset_2 = ['DATAFLOW', 'OBS_FLAG']
-        df_Dataset_2 = self.drop_columns(
-            df_Dataset_2, columns_to_drop_Dataset_2)
+        try:
+            columns_to_drop_Dataset_2 = ['DATAFLOW', 'OBS_FLAG']
+            df_Dataset_2 = self.drop_columns(
+                df_Dataset_2, columns_to_drop_Dataset_2)
+        except Exception as e:
+            logging.error(f"Error: {e}")
+            print(f"Something Wrong happen during Drop columns on the Dataset_2")
+            return
 
         # Convert TIME_PERIOD to datetime
-        df_Dataset_2 = self.convert_to_datetime(df_Dataset_2, 'TIME_PERIOD')
+        try:
+            df_Dataset_2 = self.convert_to_datetime(
+                df_Dataset_2, 'TIME_PERIOD')
+        except Exception as e:
+            logging.error(f"Error: {e}")
+            print(
+                f"Something Wrong happen during Convert TIME_PERIOD to datetime on the Dataset_2")
+            return
 
         # Rename columns
         columns_mapping_Dataset_2 = {
@@ -179,13 +225,25 @@ class Pipeline:
             'TIME_PERIOD': 'time_period',
             'OBS_VALUE': 'energy_consumption_value',
         }
-        df_Dataset_2 = self.rename_columns(
-            df_Dataset_2, columns_mapping_Dataset_2)
+        try:
+            df_Dataset_2 = self.rename_columns(
+                df_Dataset_2, columns_mapping_Dataset_2)
+        except Exception as e:
+            logging.error(f"Error: {e}")
+            print(
+                f"Something Wrong happen during Rename columns on the Dataset_2")
+            return
 
         print("#5 DATASET 2: Transformed and Cleaned Data")
         # Save to SQLite database
-        self.save_to_sqlite(
-            df_Dataset_2, 'energy_consumption.db', 'FECT_Road')
+        try:
+            self.save_to_sqlite(
+                df_Dataset_2, 'energy_consumption.db', 'FECT_Road')
+        except Exception as e:
+            logging.error(f"Error: {e}")
+            print(
+                f"Something Wrong happen during Save to SQLite database on the Dataset_2")
+            return
 
         print("#6 DATASET 2: Transfered Data to FECT_Total table in SQLLite.")
 
