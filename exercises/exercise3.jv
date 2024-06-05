@@ -85,7 +85,7 @@ pipeline TransportPipeline {
             'month' oftype GEMonth_Type,
             'goods_id' oftype GoodsID_Type,
             'goods_name' oftype text,
-            'goods_sourc' oftype text,
+            'goods_source' oftype text,
             'abroad' oftype PositiveNumber_Type,
             'total' oftype PositiveNumber_Type,
         ];
