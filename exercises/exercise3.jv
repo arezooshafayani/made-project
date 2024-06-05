@@ -10,6 +10,7 @@ pipeline TransportPipeline {
         -> TransportCSVInterpreter 
         -> TransportRowDeleter
         -> TransportColumnDeleter
+        -> TransportHeaderWriter
         -> TransportTableInterpreter        
         -> TransportLoader;
 
@@ -22,7 +23,7 @@ pipeline TransportPipeline {
     // Text Interpreter
     //Ensure German umlauts are saved correctly
     block TransportTextFileInterpreter oftype TextFileInterpreter { 
-        encoding: "latin2";  
+        encoding: "latin4";  
     }
 
     // CSV Interpreter
@@ -43,6 +44,12 @@ pipeline TransportPipeline {
         column AA, column AB, column AC, column AD, column AE,
         column AF, column AG, column AH , column AI, column AJ, 
         column AL, column AM,column AN,column AQ ,column AR,column AS];
+    }
+
+    //Update Header
+    block TransportHeaderWriter oftype CellWriter {
+        at: range A1:G1;
+        write: ["year", "month", "goods_id", "goods_name", "goods_source", "abroad", "total"];
     }
 
     //Define valueType for Month (should be in German)
