@@ -1,0 +1,113 @@
+// EXERCISE_4
+// DeadLine: 2024-06-13
+// Submit Data: 2024-06-7
+
+
+pipeline TemperaturesPipeline {
+
+    // Pipeline
+    Temperatures_Extractor     
+        -> Temperatures_ZipArchiveInterpreter
+        -> Temperatures_FilePicker
+        -> Temperatures_TextFileInterpreter
+        -> Temperatures_CSVInterpreter
+        -> Temperatures_ColDataSelector
+        -> Temperatures_ColumnDeleter
+        -> Temperatures_TableInterpreter        
+        -> temperature_CelsiusToFahrenheitTransformer
+        -> battery_temperature_CelsiusToFahrenheitTransformer
+        -> Temperatures_Loader;
+  
+    // Get CSV file from URL 
+    block Temperatures_Extractor oftype HttpExtractor {
+        url: "https://www.mowesta.com/data/measure/mowesta-dataset-20221107.zip";
+    }
+  
+    //It is a ZIP file
+    block Temperatures_ZipArchiveInterpreter oftype ArchiveInterpreter {
+        archiveType: "zip";
+    }
+
+    //Select Correct File
+    block Temperatures_FilePicker oftype FilePicker {
+        path: "/data.csv";
+    }
+
+    //FileInterpreter
+    block Temperatures_TextFileInterpreter oftype TextFileInterpreter { }
+
+    // CSV Interpreter
+    block Temperatures_CSVInterpreter oftype CSVInterpreter {
+        delimiter: ';';
+    }  
+
+    //Select Range in csv Columns
+    block Temperatures_ColDataSelector oftype CellRangeSelector   {
+        select: range A1:J*;
+    }
+
+    //Drop "Additional" Column
+    block Temperatures_ColumnDeleter oftype ColumnDeleter
+    {
+        delete: [column F, column G, column H , column I];
+    }
+
+    //Convert C to F
+    transform CelsiusToFahrenheit {
+        from Celsius oftype decimal;
+        to Fahrenheit oftype decimal;
+        Fahrenheit: (Celsius * 9/5) + 32;
+    }
+
+    //put the value in the same field for "temperature"
+    block temperature_CelsiusToFahrenheitTransformer oftype TableTransformer {
+        inputColumns: ['temperature'];
+        outputColumn: 'temperature';
+        use: CelsiusToFahrenheit;
+    }
+
+    //put the value in the same field for "battery_temperature"
+    block battery_temperature_CelsiusToFahrenheitTransformer oftype TableTransformer {
+        inputColumns: ['battery_temperature'];
+        outputColumn: 'battery_temperature';
+        use: CelsiusToFahrenheit;
+    }
+
+    //---- Constraints
+    valuetype Check_ID_Validation oftype integer {
+            constraints: [ PositiveIntConstraint ];
+        }
+
+    constraint PositiveIntConstraint on integer:
+        value > 0;
+    
+
+    valuetype Check_Month_Validation oftype integer {
+        constraints: [Month_Constraint];
+    }
+
+    constraint Month_Constraint on integer:
+        value >= 1 and value <= 12;
+    //---------------
+
+    // Table Interpreter
+    block Temperatures_TableInterpreter oftype TableInterpreter {
+        header: false;
+        columns: [
+            'id' oftype Check_ID_Validation, 
+            'producer' oftype text, 
+            'model' oftype text, 
+            'month' oftype Check_Month_Validation, 
+            'temperature' oftype decimal, 
+            'battery_temperature' oftype decimal, 
+        ];
+    }
+
+
+    // Create the SQLITE db
+    block Temperatures_Loader oftype SQLiteLoader {
+        table: "temperatures";
+        file: "./temperatures.sqlite";
+    }
+
+}
