@@ -48,8 +48,11 @@ This dataset details energy consumption specifically within road transport, cove
 2. build an automated data pipeline [#2][i2]
 3. Build an automated data pipeline For Exercise 3 [#3][i3]
 4. Create a report about your choice of data and how you improved it using an automated data pipeline in 3 Pages [#4][i4]
+5. Add automated tests for my project [#5][i5]
 
 [i1]: https://github.com/arezooshafayani/made-project/issues/1
 [i2]: https://github.com/arezooshafayani/made-project/issues/2
 [i3]: https://github.com/arezooshafayani/made-project/issues/3
 [i4]: https://github.com/arezooshafayani/made-project/issues/4
+[i5]: https://github.com/arezooshafayani/made-project/issues/5
+
