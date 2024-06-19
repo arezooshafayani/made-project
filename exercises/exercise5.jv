@@ -1,0 +1,86 @@
+// EXERCISE_5
+// DeadLine: 2024-06-27
+// Submit Data: 2024-06-19
+
+pipeline stopsPipeline
+{
+    // Pipeline
+    Stops_Extractor
+        ->Stops_ZipArchiveInterpreter
+        ->Stops_FilePicker
+        ->Stops_TextFileInterpreter
+        ->Stops_CSVInterpreter
+        ->Stops_TableInterpreter  
+        ->Stops_Loader;
+
+
+    // Get file from URL 
+    block Stops_Extractor oftype HttpExtractor {
+        url: "https://gtfs.rhoenenergie-bus.de/GTFS.zip";
+    }
+
+    //It is a ZIP file
+    block Stops_ZipArchiveInterpreter oftype ArchiveInterpreter {
+        archiveType: "zip";
+    }
+
+    //Select Correct File
+    block Stops_FilePicker oftype FilePicker {
+        path: "/stops.txt";
+    }
+
+    //FileInterpreter
+    block Stops_TextFileInterpreter oftype TextFileInterpreter { 
+        encoding: "utf8";
+    }
+
+    // CSV Interpreter
+    block Stops_CSVInterpreter oftype CSVInterpreter {
+        delimiter: ',';
+        enclosing: '"';
+    }  
+
+    //--------------
+    //Filtering Zone ID
+    valuetype ZoneID_Type oftype integer {
+        constraints: [ ZoneID_Constraint ];
+    }
+
+    //Define a constraint:Only keep stops from zone 1645
+    constraint ZoneID_Constraint on integer:
+        value == 1645;
+
+    valuetype geographic_coordinates_Type oftype decimal {
+        constraints: [ geographic_coordinates ];
+    }
+    //geographic coordinates between -90 and 90
+    constraint geographic_coordinates oftype RangeConstraint {
+        //It's a decimal value
+        lowerBound: -90.0;        
+        upperBound: 90.0;
+
+        lowerBoundInclusive: true;
+        upperBoundInclusive: true;
+    }    
+
+    //--------------
+
+    // Table Interpreter
+    block Stops_TableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            'stop_id' oftype integer, 
+            'stop_name' oftype text, 
+            'stop_lat' oftype geographic_coordinates_Type, 
+            'stop_lon' oftype geographic_coordinates_Type, 
+            'zone_id' oftype ZoneID_Type, 
+        ];
+    }
+
+
+    // Create the SQLITE db
+    block Stops_Loader oftype SQLiteLoader {
+        table: "stops";
+        file: "./gtfs.sqlite";
+    }
+}
