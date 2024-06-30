@@ -44,20 +44,20 @@ A Jupyter notebook report named [analysis-report.ipynb](https://github.com/arezo
 `bash`
 git clone https://github.com/arezooshafayani/made-project.git
 
-````````
+```
 
 2. In the project directory
 
-```````bash```````
+`bash`
   cd made-project
-````````
+```
 
 3. Run the bash script `project/pipeline.sh`
 
 `bash`
 ./project/pipeline.sh
 
-````````
+```
 
 This will run the Pipeline and create a SQL database in `\data` directory, DB name is `energy_consumption.db`.
 
@@ -65,6 +65,6 @@ This will run the Pipeline and create a SQL database in `\data` directory, DB na
 
 To run tests, run the following command
 
-```````bash```````
+`bash`
   ./project/tests.sh
-````````
+```
