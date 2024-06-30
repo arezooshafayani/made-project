@@ -2,50 +2,69 @@
 
 ![](https://byob.yarr.is/arezooshafayani/made-project/score_ex1) ![](https://byob.yarr.is/arezooshafayani/made-project/score_ex2) ![](https://byob.yarr.is/arezooshafayani/made-project/score_ex3) ![](https://byob.yarr.is/arezooshafayani/made-project/score_ex4) ![](https://byob.yarr.is/arezooshafayani/made-project/score_ex5)
 
-# Methods of Advanced Data Engineering Template Project
+# Analyzing the dominance of road transport in total energy consumption and its climate implications
 
-This template project provides some structure for your open data project in the MADE module at FAU.
-This repository contains (a) a data science project that is developed by the student over the course of the semester, and (b) the exercises that are submitted over the course of the semester.
-Before you begin, make sure you have [Python](https://www.python.org/) and [Jayvee](https://github.com/jvalue/jayvee) installed. We will work with [Jupyter notebooks](https://jupyter.org/). The easiest way to do so is to set up [VSCode](https://code.visualstudio.com/) with the [Jupyter extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter).
+![road transport](project/Images/MainImg.jpg)
+Reference: Photo by [Unsplash](https://unsplash.com/photos/aerial-view-of-highway-full-of-cars-and-trucks-traffic-jam-in-the-middle-of-green-forest-netherlands-M1GDoN_YPaU)
 
-To get started, please follow these steps:
-1. Create your own fork of this repository. Feel free to rename the repository right after creation, before you let the teaching instructors know your repository URL. **Do not rename the repository during the semester**.
-2. Setup the exercise feedback by changing the exercise badge sources in the `README.md` file following the patter `![](https://byob.yarr.is/<github-user-name>/<github-repo>/score_ex<exercise-number>)`. 
-For example, if your user is _myuser_ and your repo is _myrepo_, then update the badge for _exercise 1_ to `![](https://byob.yarr.is/myrepo/myuser/score_ex1)`. Proceed with the remaining badges accordingly.
+## Introduction
 
+The transportation sector is a major contributor to global energy consumption and greenhouse gas emissions. Within this sector, road transport stands out due to its extensive use of fossil fuels and its impact on climate change. This report investigates the dominance of road transport in the overall energy consumption of the transport sector across different countries over the years, using two key datasets. The aim is to quantify road transport's energy consumption relative to total transport energy consumption and discuss the potential climate implications of this dominance.
 
-## Project Work
-Your data engineering project will run alongside lectures during the semester. We will ask you to regularly submit project work as milestones so you can reasonably pace your work. All project work submissions **must** be placed in the `project` folder.
+## Data sources
 
-### Exporting a Jupyter Notebook
-Jupyter Notebooks can be exported using `nbconvert` (`pip install nbconvert`). For example, to export the example notebook to html: `jupyter nbconvert --to html examples/final-report-example.ipynb --embed-images --output final-report.html`
+### Data Source1: Final energy consumption in transport by type of fuel
 
+- Metadata URL: https://ec.europa.eu/eurostat/databrowser/view/ten00126/default/table?lang=en&category=cli.cli_dri.cli_dri_tran
+- Data URL: https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/ten00126/?format=SDMX-CSV&compressed=true
+- Data Type: CSV
+- Period: 2011 to 2022
+- Description: This dataset provides a comprehensive view of energy consumption across various transport modes, including road, rail, domestic aviation, and navigation, while excluding international operations and non-transport energy uses.
 
-## Exercises
-During the semester you will need to complete exercises using [Jayvee](https://github.com/jvalue/jayvee). You **must** place your submission in the `exercises` folder in your repository and name them according to their number from one to five: `exercise<number from 1-5>.jv`.
+### Datasource2: Final energy consumption in road transport by type of fuel
 
-In regular intervalls, exercises will be given as homework to complete during the semester. Details and deadlines will be discussed in the lecture, also see the [course schedule](https://made.uni1.de/). At the end of the semester, you will therefore have the following files in your repository:
+- Metadata URL: https://ec.europa.eu/eurostat/databrowser/view/ten00127/default/table?lang=en&category=cli.cli_dri.cli_dri_tran
+- Data URL: https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/ten00127/?format=SDMX-CSV&compressed=true
+- Data Type: CSV
+- Period: 2011 to 2022
+- Description: This dataset focuses on energy consumption within road transport, covering vehicles like cars, buses, trucks, and emergency vehicles on public roads.
 
-1. `./exercises/exercise1.jv`
-2. `./exercises/exercise2.jv`
-3. `./exercises/exercise3.jv`
-4. `./exercises/exercise4.jv`
-5. `./exercises/exercise5.jv`
+## Analysis and Conclusion
 
-### Exercise Feedback
-We provide automated exercise feedback using a GitHub action (that is defined in `.github/workflows/exercise-feedback.yml`). 
+The analysis reveals that road transport consistently accounts for a significant portion of total transport energy consumption across various countries, particularly in Germany, France, and Italy. This dominance has profound climate implications due to the heavy reliance on fossil fuels like motor gasoline and diesel oil, which are major sources of greenhouse gas emissions. The trends from 2011 to 2022 show a strong correlation between total and road transport energy use, with notable peaks around 2017-2018 and a sharp decline in 2020, likely due to the COVID-19 pandemic. This underscores the urgent need for targeted policies to reduce emissions by transitioning to cleaner energy sources, improving fuel efficiency, and promoting alternative transport modes. However, the analysis is limited by the scope of available data and does not account for all factors influencing energy consumption, suggesting the need for further research to fully understand and address the transport sector's impact on climate change.
 
-To view your exercise feedback, navigate to Actions -> Exercise Feedback in your repository.
+## Jupyter notebook report
 
-The exercise feedback is executed whenever you make a change in files in the `exercise` folder and push your local changes to the repository on GitHub. To see the feedback, open the latest GitHub Action run, open the `exercise-feedback` job and `Exercise Feedback` step. You should see command line output that contains output like this:
+A Jupyter notebook report named [analysis-report.ipynb](https://github.com/arezooshafayani/made-project/tree/main/project/analysis-report.ipynb) is available in the `project` directory or the [analysis-report.pdf](https://github.com/arezooshafayani/made-project/tree/main/project/analysis-report.pdf).
 
-```sh
-Found exercises/exercise1.jv, executing model...
-Found output file airports.sqlite, grading...
-Grading Exercise 1
-	Overall points 17 of 17
-	---
-	By category:
-		Shape: 4 of 4
-		Types: 13 of 13
-```
+## Run Pipeline Locally
+
+1. Clone the project
+
+`bash`
+git clone https://github.com/arezooshafayani/made-project.git
+
+````````
+
+2. In the project directory
+
+```````bash```````
+  cd made-project
+````````
+
+3. Run the bash script `project/pipeline.sh`
+
+`bash`
+./project/pipeline.sh
+
+````````
+
+This will run the Pipeline and create a SQL database in `\data` directory, DB name is `energy_consumption.db`.
+
+## Running Tests
+
+To run tests, run the following command
+
+```````bash```````
+  ./project/tests.sh
+````````
